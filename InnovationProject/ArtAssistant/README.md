@@ -1,20 +1,20 @@
-How to run this project:
+**How to run this project:**
 
   1. Install python:
       -Go to the terminal
      
       -Go to the shell in the terminal using 'control + c'
      
-      -install homebrew using this line of code
-         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-     
-      -verify the installation using this line of code
+      -install homebrew using this line of code:
+     /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+      -verify the installation using this line of code: 
          brew --version
      
-      -install python using this line of code
+      -install python using this line of code:
          brew install python
 
-     -verify the installation using this line of code
+     -verify the installation using this line of code:
          python3 --version
      
   2. Download the files of this project (README file, artassist file, and requirements file)
