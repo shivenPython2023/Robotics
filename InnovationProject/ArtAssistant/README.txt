@@ -25,7 +25,7 @@
             git clone https://github.com/shivenPython2023/Robotics.git
      
   3. Download the packages for this project in your terminal using this line of code:
-     python3 -m pip install -r requirements
+     python3 -m pip install -r requirements.txt
 
   4. Run the program:
      -You can do this using this line of code:
