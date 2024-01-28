@@ -1,26 +1,49 @@
 import os
-from PIL import Image, ImageDraw, ImageEnhance
-import numpy as np
+from PIL import Image, ImageDraw
 import cv2
+import numpy as np
+import matplotlib.pyplot as plt
 import math
-from PIL import ImageOps
-import time
-from itertools import groupby
+
 
 def create_outline(input_image_path, output_image_path):
     try:
-        image = cv2.imread(input_image_path, cv2.IMREAD_GRAYSCALE)
-        if image is None:
-            raise FileNotFoundError(f"Error loading input image: {input_image_path}")
-        edges = cv2.Canny(image, 100, 200)
+        # Importing Modules
+        plt.style.use('ggplot')
 
-        # Invert the image to make the edges white on a black background
-        edges = cv2.bitwise_not(edges)
+        # Loading Original Image
+        img = cv2.imread(input_image_path)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-        # Save and display the outline image
-        cv2.imwrite(output_image_path, edges)
+        # Create a 1x1 grid of subplots (just for simplicity)
+        fig, axs = plt.subplots(1, 1, figsize=(16, 12))
+
+        # Hide axes
+        axs.axis('off')
+
+        # Now update the canvas with the final sketch
+        # Converting Image to GrayScale
+        img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
+        # Inverting the Image
+        img_invert = cv2.bitwise_not(img_gray)
+
+        # Smoothing the Image
+        img_smoothing = cv2.GaussianBlur(img_invert, (21, 21), sigmaX=0, sigmaY=0)
+
+        # Converting to Pencil Sketch
+        final = cv2.divide(img_gray, 255 - img_smoothing, scale=255)
+
+        # Update the canvas with the final sketch
+        axs.imshow(final, cmap="gray")
+
+        # Save the final sketch image directly without displaying
+        plt.savefig(output_image_path, bbox_inches='tight', pad_inches=0, transparent=True)
+        plt.close(fig)  # Close the figure to avoid displaying it
+
     except Exception as e:
         print(f"Error in create_outline: {e}")
+
 
 def add_grid2(image, output_image_path):
     # Get image dimensions
@@ -46,12 +69,12 @@ def add_grid2(image, output_image_path):
     # Draw horizontal grid lines
     for i in range(1, num_rows):
         y = i * row_spacing
-        draw.line([(0, y), (image_width, y)], fill=(255, 0, 0, 255), width=2)
+        draw.line([(0, y), (image_width, y)], fill=(255, 0, 0, 255), width=5)
 
     # Draw vertical grid lines
     for i in range(1, num_columns):
         x = i * column_spacing
-        draw.line([(x, 0), (x, image_height)], fill=(255, 0, 0, 255), width=2)
+        draw.line([(x, 0), (x, image_height)], fill=(255, 0, 0, 255), width=5)
 
     # Convert the grid image to a numpy array
     grid_array = np.array(grid_image)
@@ -68,6 +91,8 @@ def add_grid2(image, output_image_path):
 
     # Save the resulting image
     blended_image.save(output_image_path, format="PNG")
+
+
 
 def create_grid(input_image_path, output_image_path):
     # Load the input image (contour image from the "Drawing" stage)
@@ -89,12 +114,12 @@ def add_grid(image, grid_size):
     # Draw horizontal grid lines
     for i in range(1, grid_size):
         y = i * row_spacing
-        ImageDraw.Draw(image).line([(0, y), (image_width, y)], fill=(255, 0, 0), width=2)
+        ImageDraw.Draw(image).line([(0, y), (image_width, y)], fill=(255, 0, 0), width=5)
 
     # Draw vertical grid lines
     for i in range(1, grid_size):
         x = i * column_spacing
-        ImageDraw.Draw(image).line([(x, 0), (x, image_height)], fill=(255, 0, 0), width=2)
+        ImageDraw.Draw(image).line([(x, 0), (x, image_height)], fill=(255, 0, 0), width=5)
 
 def create_animation_frames(countoured_image_path, grid_size, output_path):
     # Load the countoured image
